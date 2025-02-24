@@ -24,7 +24,7 @@ aba1, aba2, aba3 = st.tabs(["📌 Gestão de Caixas", "💰 Gestão do Cofre", "
 
 # Inicializando os DataFrames no Session State
 if "df_caixas" not in st.session_state:
-    st.session_state.df_caixas = pd.DataFrame(columns=["Data", "Operador", "Caixa", "Entradas", "Saídas", "Saldo Final", "Venda de Bolão", "Venda de Raspadinha", "Estoque Bolão", "Estoque Raspadinha"])
+    st.session_state.df_caixas = pd.DataFrame(columns=["Data", "Operador", "Caixa", "Tipo de Venda", "Pagamento de Faturas", "Saques", "Depósitos", "Entradas", "Saídas", "Saldo Final", "Venda de Bolão", "Venda de Raspadinha", "Estoque Bolão", "Estoque Raspadinha"])
 
 if "df_cofre" not in st.session_state:
     st.session_state.df_cofre = pd.DataFrame(columns=["Data", "Descrição", "Entrada", "Saída", "Saldo"])
@@ -42,19 +42,27 @@ with aba1:
         caixa = col3.selectbox("🗄 Caixa", ["Caixa 1", "Caixa 2", "Caixa Interno"])
         
         col4, col5, col6 = st.columns(3)
-        entradas = col4.number_input("💰 Entradas", min_value=0.0, format="%.2f")
-        saidas = col5.number_input("💸 Saídas", min_value=0.0, format="%.2f")
-        saldo_final = col6.number_input("🔎 Saldo Final", min_value=0.0, format="%.2f")
+        tipo_venda = col4.selectbox("🛒 Tipo de Venda", ["Pagamento de Faturas", "Saques", "Depósitos", "Outros"])
+        pagamento_faturas = col5.number_input("💳 Pagamento de Faturas", min_value=0.0, format="%.2f")
+        saques = col6.number_input("💸 Saques", min_value=0.0, format="%.2f")
         
-        col7, col8, col9, col10 = st.columns(4)
-        venda_bolao = col7.number_input("🎟 Venda de Bolão", min_value=0, format="%d")
-        venda_raspadinha = col8.number_input("🎫 Venda de Raspadinha", min_value=0, format="%d")
-        estoque_bolao = col9.number_input("📦 Estoque Bolão", min_value=0, format="%d")
-        estoque_raspadinha = col10.number_input("📦 Estoque Raspadinha", min_value=0, format="%d")
+        col7, col8, col9 = st.columns(3)
+        depositos = col7.number_input("🏦 Depósitos", min_value=0.0, format="%.2f")
+        entradas = col8.number_input("💰 Entradas", min_value=0.0, format="%.2f")
+        saidas = col9.number_input("📤 Saídas", min_value=0.0, format="%.2f")
+        
+        col10, col11, col12 = st.columns(3)
+        saldo_final = col10.number_input("🔎 Saldo Final", min_value=0.0, format="%.2f")
+        venda_bolao = col11.number_input("🎟 Venda de Bolão", min_value=0, format="%d")
+        venda_raspadinha = col12.number_input("🎫 Venda de Raspadinha", min_value=0, format="%d")
+        
+        col13, col14 = st.columns(2)
+        estoque_bolao = col13.number_input("📦 Estoque Bolão", min_value=0, format="%d")
+        estoque_raspadinha = col14.number_input("📦 Estoque Raspadinha", min_value=0, format="%d")
         
         submit = st.form_submit_button("✅ Salvar Registro")
         if submit:
-            novo_dado = pd.DataFrame([[data, operador, caixa, entradas, saidas, saldo_final, venda_bolao, venda_raspadinha, estoque_bolao, estoque_raspadinha]],
+            novo_dado = pd.DataFrame([[data, operador, caixa, tipo_venda, pagamento_faturas, saques, depositos, entradas, saidas, saldo_final, venda_bolao, venda_raspadinha, estoque_bolao, estoque_raspadinha]],
                                      columns=st.session_state.df_caixas.columns)
             st.session_state.df_caixas = pd.concat([st.session_state.df_caixas, novo_dado], ignore_index=True)
             st.success("Registro salvo com sucesso!")
@@ -94,3 +102,4 @@ with aba3:
         st.plotly_chart(fig)
     
     st.dataframe(st.session_state.df_relatorios)
+
